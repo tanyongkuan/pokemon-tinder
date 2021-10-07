@@ -1,9 +1,55 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { GetStaticProps } from 'next';
+import axios from 'axios';
+import { Payload, Pokemon } from '../assets/models';
+import Layout from '../components/Layout';
 
-const Home: NextPage = () => {
+export default function Home(props: { pokemonData: Pokemon[] }) {
+	return (
+		<Layout title="Pokemon Tinder">
+			<h1 className="text-4xl mb-8 text-center">NextJS Pokemon</h1>
+		</Layout>
+	);
+}
+
+export const getStaticProps: GetStaticProps = async (context) => {
+	const response = await axios.get<Payload<Pokemon[]>>(
+		'https://pokeapi.co/api/v2/pokemon?limit=30'
+	);
+	const results = response.data.results;
+
+	const getStat = async (idx: number) => {
+		const response = await axios.get<Pokemon>(
+			`https://pokeapi.co/api/v2/pokemon-form/${idx + 1}`
+		);
+
+		return await response.data;
+	};
+
+	const pokemonData = await Promise.all(
+		results.map(async (result: Pokemon, idx: number) => {
+			const imgIndex = ('00' + (idx + 1)).slice(-3);
+			const image = `http://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
+
+			const responseData = await getStat(idx);
+			//let types = statResult.types.map((type) => type.type.name);
+
+			return {
+				...result,
+				id: idx + 1,
+				image,
+				types: responseData.types,
+			};
+		})
+	);
+
+	return {
+		props: {
+			pokemonData,
+		},
+	};
+};
+
+/*const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
@@ -69,4 +115,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default Home*/
