@@ -3,11 +3,19 @@ import Head from 'next/head';
 import { styled } from '@mui/material/styles';
 
 const MainContainer = styled('div')`
-	background-color: gray;
+	min-height: 100vh;
+	//padding: 0 0.5rem;
+	display: flex;
+	/*flex-direction: column;
+	justify-content: center;
+	align-items: center;*/
+	height: 100vh;
 `;
 
 const BodyContainer = styled('main')`
 	min-height: 100vh;
+	height: 100vh;
+	width: 100%;
 `;
 
 export default function Layout(prop: {
@@ -20,7 +28,9 @@ export default function Layout(prop: {
 				<title>{prop.title}</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<BodyContainer>{prop.children}</BodyContainer>
+			<BodyContainer className="container min-h-screen">
+				{prop.children}
+			</BodyContainer>
 		</MainContainer>
 	);
 }

@@ -15,9 +15,17 @@ export interface PokemonType {
 }
 
 export interface Props {
-	bgcolor: string;
+	bgcolor?: string;
+	bgimage?: string;
+	opacity?: number;
+	reset?: number;
 }
 
 export interface Payload<T> {
 	results: T;
 }
+
+export type ReactComponent =
+	| React.ReactChild
+	| React.ReactFragment
+	| React.ReactPortal;
