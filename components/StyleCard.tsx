@@ -38,10 +38,12 @@ const RejectLabel = styled('div')<Props>`
 
 export const Card = ({
 	children,
+	draggable,
 	setVote,
 	...props
 }: {
 	children: JSX.Element;
+	draggable: boolean;
 	setVote: (vote: boolean) => void;
 }) => {
 	// motion stuff
@@ -123,7 +125,7 @@ export const Card = ({
 
 	return (
 		<StyledCard
-			drag="x"
+			drag={draggable}
 			animate={controls}
 			dragConstraints={constrained && { left: 0, right: 0, top: 0, bottom: 0 }}
 			dragElastic={1}

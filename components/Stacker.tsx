@@ -45,7 +45,7 @@ export const Stacker = ({
 				let isTop = index === stack.length - 1;
 				return (
 					<Card
-						drag={isTop} // Only top card is draggable
+						draggable={isTop} // Only top card is draggable
 						key={item.key || index}
 						setVote={(result: boolean) => handleVote(item, result)}
 					>
