@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { styled } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const MainContainer = styled('div')`
 	min-height: 100vh;
@@ -24,6 +25,7 @@ export default function Layout(prop: {
 }) {
 	return (
 		<MainContainer>
+			<CssBaseline />
 			<Head>
 				<title>{prop.title}</title>
 				<link rel="icon" href="/favicon.ico" />

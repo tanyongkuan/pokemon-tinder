@@ -6,6 +6,12 @@ import { Props } from '../assets/models';
 
 const StyledCard = styled(motion.div)`
 	position: absolute;
+	min-width: 340px;
+	max-width: 420px;
+	min-height: 450px;
+	width: 90%;
+	height: 70%;
+	margin-bottom: 50px;
 `;
 
 const AcceptLabel = styled('div')<Props>`
@@ -16,8 +22,8 @@ const AcceptLabel = styled('div')<Props>`
 	border-radius: 4px;
 	color: green;
 	padding: 5px;
-	top: 15%;
-	left: 4%;
+	top: 10%;
+	left: 3%;
 	opacity: ${(props) =>
 		props.opacity ? (props.reset ? 0 : props.opacity * 0.003) : 0};
 `;
@@ -30,7 +36,7 @@ const RejectLabel = styled('div')<Props>`
 	border-radius: 4px;
 	color: red;
 	padding: 5px;
-	top: 15%;
+	top: 10%;
 	right: 3%;
 	opacity: ${(props) =>
 		props.opacity ? (props.reset ? 0 : props.opacity * -0.003) : 0};
@@ -114,7 +120,7 @@ export const Card = ({
 				const childNode = cardElem.current;
 				const parentNode = cardElem.current.parentNode as HTMLDivElement;
 				const result = getVote(childNode, parentNode);
-				result !== undefined && setVote(result);
+				return result !== undefined && setVote(result);
 			}
 
 			return false;

@@ -42,16 +42,14 @@ const RightBody = styled(Stack)`
 	position: inherit;
 `;
 
-const Wrapper = styled(Stacker)`
-	width: 100%;
-	height: inherit;
-	min-height: 90vh;
-	position: inherit;
-`;
-
 const ButtonHolder = styled(Grid)`
 	position: absolute;
-	bottom: 50px;
+	bottom: 5%;
+
+	> * {
+		padding-left: 48px;
+		padding-right: 48px;
+	}
 `;
 
 const ButtonIcon = styled(Button)`
@@ -78,17 +76,12 @@ export default function Home(props: {
 						justifyContent="center"
 						alignItems="center"
 					>
-						<Wrapper onVote={(item, vote) => console.log(item.props, vote)}>
-							{props.pokemonData.reverse().map((pokemon, idx) => (
+						<Stacker onVote={(item, vote) => console.log(item.props, vote)}>
+							{props.pokemonData.map((pokemon, idx) => (
 								<PokemonCard key={idx} pokemon={pokemon} />
 							))}
-						</Wrapper>
-						<ButtonHolder
-							container
-							spacing={8}
-							justifyContent="center"
-							alignItems="center"
-						>
+						</Stacker>
+						<ButtonHolder container justifyContent="center" alignItems="center">
 							<Grid item>
 								<ButtonIcon
 									color="success"
@@ -117,7 +110,7 @@ export default function Home(props: {
 
 export const getStaticProps: GetStaticProps = async (context) => {
 	const response = await axios.get<Payload<Pokemon[]>>(
-		'https://pokeapi.co/api/v2/pokemon?limit=30'
+		'https://pokeapi.co/api/v2/pokemon?limit=20'
 	);
 	const results = response.data.results;
 
@@ -132,7 +125,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	const pokemonData = await Promise.all(
 		results.map(async (result: Pokemon, idx: number) => {
 			const imgIndex = ('00' + (idx + 1)).slice(-3);
-			const image = `http://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
+			const image = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
 
 			const responseData = await getStat(idx);
 			//let types = statResult.types.map((type) => type.type.name);
@@ -153,7 +146,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 	const matchData = matchResults.map((result: Pokemon, idx: number) => {
 		const imgIndex = ('00' + (idx + 1)).slice(-3);
-		const image = `http://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
+		const image = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
 
 		return {
 			...result,
@@ -164,7 +157,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 	return {
 		props: {
-			pokemonData,
+			pokemonData: pokemonData.reverse(),
 			matchData,
 		},
 	};

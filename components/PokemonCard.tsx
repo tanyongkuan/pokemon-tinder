@@ -9,8 +9,8 @@ import { colors } from '../assets/color';
 const Holder = styled(Card)`
 	border-radius: 25px;
 	background-color: white;
-	width: 450px;
-	height: auto;
+	width: 100%;
+	height: 100%;
 	padding: 12px;
 	display: flex;
 	flex-direction: column;
@@ -22,9 +22,10 @@ const Holder = styled(Card)`
 
 const ImageHolder = styled('span')<Props>`
 	background: url(${(props) => props.bgimage}) no-repeat center;
-	background-size: 100%;
+	background-size: contain;
 	display: inline-block;
-	min-height: 400px;
+	height: 100%;
+	min-height: 300px;
 `;
 
 const PokemonName = styled(Typography)`
@@ -40,8 +41,9 @@ const ChipHolder = styled('div')`
 const CustomizedChip = styled(Chip)<Props>`
 	background-color: ${(props) => props.bgcolor};
 	color: white;
-	//margin-right: 0.5rem;
-	//text-transform: capitalize;
+	margin-right: 0.5rem;
+	text-transform: capitalize;
+	font-weight: 500;
 `;
 
 export default function PokemonCard(props: { pokemon: Pokemon }) {

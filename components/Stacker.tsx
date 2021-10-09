@@ -1,15 +1,22 @@
-import React, { useState, Children } from 'react';
-import styled from '@emotion/styled';
+import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { Card } from './StyleCard';
 
 // basic default styles for container
-const Frame = styled.div`
+const Frame = styled('div')`
 	width: 100%;
+	height: 100%;
+	position: inherit;
 	overflow: hidden;
 	display: flex;
 	justify-content: center;
-	align-items: center;
-	position: relative;
+
+	${(props) => props.theme.breakpoints.up('xs')} {
+		padding: 2rem;
+	}
+	${(props) => props.theme.breakpoints.up('md')} {
+		align-items: center;
+	}
 `;
 
 export const Stacker = ({
@@ -20,7 +27,6 @@ export const Stacker = ({
 	onVote: (item: JSX.Element, vote: boolean) => void;
 	children: JSX.Element[];
 }) => {
-	//const [stack, setStack] = useState(Children.toArray(children));
 	const [stack, setStack] = useState(children);
 
 	// return new array with last item removed
@@ -42,10 +48,9 @@ export const Stacker = ({
 	return (
 		<Frame {...props}>
 			{stack.map((item, index) => {
-				let isTop = index === stack.length - 1;
 				return (
 					<Card
-						draggable={isTop} // Only top card is draggable
+						draggable={index === stack.length - 1} // Only top card is draggable
 						key={item.key || index}
 						setVote={(result: boolean) => handleVote(item, result)}
 					>
