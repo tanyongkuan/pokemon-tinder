@@ -4,18 +4,11 @@ import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 const MainContainer = styled('div')`
-	min-height: 100vh;
-	//padding: 0 0.5rem;
 	display: flex;
-	/*flex-direction: column;
-	justify-content: center;
-	align-items: center;*/
-	height: 100vh;
+	min-height: 100vh;
 `;
 
 const BodyContainer = styled('main')`
-	min-height: 100vh;
-	height: 100vh;
 	width: 100%;
 `;
 
@@ -28,7 +21,8 @@ export default function Layout(prop: {
 			<CssBaseline />
 			<Head>
 				<title>{prop.title}</title>
-				<link rel="icon" href="/favicon.ico" />
+				<meta name="description" content="Tinder for Pokemon Lovers" />
+				<link rel="icon" href="/icon/pokeball.svg" />
 			</Head>
 			<BodyContainer className="container min-h-screen">
 				{prop.children}

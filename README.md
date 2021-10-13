@@ -1,34 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h1 align="center">Pokemon Tinder</h1>
 
-## Getting Started
+<p align="center">Design inspired by Tinder while learning React and NextJS.</p>
 
-First, run the development server:
+## Links
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+- [Live](https://pokemon-tinder.netlify.app/ 'Live View')
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [API]('https://pokeapi.co/docs/v2' 'Pokemon API')
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Built With
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+<img src="https://img.shields.io/badge/react%20-%2320232a.svg?&style=for-the-badge&logo=react&logoColor=%2361DAFB"/><img src="https://img.shields.io/badge/typescript%20-%23007ACC.svg?&style=for-the-badge&logo=typescript&logoColor=white"/>
+<br/><br/>
+[![style: material ui](https://img.shields.io/badge/style-Material--UI-ff69b4)](https://mui.com/)
+[![style: framer motion](https://img.shields.io/badge/style-Framer_Motion-ff69b4)](https://www.framer.com/motion/)
+[![style: styled-components](https://img.shields.io/badge/style-%F0%9F%92%85%20styled--components-orange.svg?colorB=daa357&colorA=db748e)](https://github.com/styled-components/styled-components)
+[![code style: eslint](https://img.shields.io/badge/code_style-eslint-blue)](https://github.com/eslint/eslint)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+<br/><br/>
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6d758f59-15ac-4593-b3c6-1c21d4a25d4f/deploy-status)](https://app.netlify.com/sites/pokemon-tinder/deploys)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+<br/><br/>
 
-## Learn More
+## Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+![Home Page](/public/screenshot.png 'Home Page')
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## About Me
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[![Netlify Status](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tanyongkuan/)

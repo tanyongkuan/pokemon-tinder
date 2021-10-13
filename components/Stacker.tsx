@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, {
+	useState,
+	useRef,
+	forwardRef,
+	useImperativeHandle,
+} from 'react';
 import { styled } from '@mui/material/styles';
-import { Card } from './StyleCard';
+import { StyleCard, StyleCardRef } from './StyleCard';
 
 // basic default styles for container
 const Frame = styled('div')`
@@ -19,15 +24,21 @@ const Frame = styled('div')`
 	}
 `;
 
-export const Stacker = ({
-	onVote,
-	children,
-	...props
-}: {
-	onVote: (item: JSX.Element, vote: boolean) => void;
+type Props = {
+	getvote: (item: JSX.Element, vote: boolean) => void;
 	children: JSX.Element[];
-}) => {
-	const [stack, setStack] = useState(children);
+	setmotion: (motion: number) => void;
+};
+
+export type StackerRef = {
+	current: HTMLDivElement | null;
+	vote: (vote: boolean) => void;
+};
+
+export const Stacker = forwardRef<StackerRef, Props>((props, ref) => {
+	const [stack, setStack] = useState(props.children);
+	const styleCard = useRef<StyleCardRef>(null);
+	const divRef = useRef<HTMLDivElement>(null);
 
 	// return new array with last item removed
 	const pop = (array: JSX.Element[]) => {
@@ -36,28 +47,46 @@ export const Stacker = ({
 		});
 	};
 
+	useImperativeHandle(ref, () => ({
+		current: divRef.current,
+		vote: (vote: boolean) => {
+			if (styleCard.current) {
+				styleCard.current.vote(vote);
+			}
+		},
+	}));
+
 	const handleVote = (item: JSX.Element, vote: boolean) => {
 		// update the stack
 		let newStack = pop(stack);
 		setStack(newStack);
 
 		// run function from onVote prop, passing the current item and value of vote
-		onVote(item, vote);
+		props.getvote(item, vote);
+	};
+
+	const handleMotion = (motion: number) => {
+		props.setmotion(motion);
 	};
 
 	return (
-		<Frame {...props}>
+		<Frame ref={divRef}>
 			{stack.map((item, index) => {
 				return (
-					<Card
+					<StyleCard
+						ref={styleCard}
 						draggable={index === stack.length - 1} // Only top card is draggable
 						key={item.key || index}
-						setVote={(result: boolean) => handleVote(item, result)}
+						setmotion={handleMotion}
+						setvote={(result: boolean) => handleVote(item, result)}
 					>
 						{item}
-					</Card>
+					</StyleCard>
 				);
 			})}
 		</Frame>
 	);
-};
+});
+Stacker.displayName = 'Stacker';
+
+export default Stacker;

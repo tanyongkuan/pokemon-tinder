@@ -19,6 +19,7 @@ export interface Props {
 	bgimage?: string;
 	opacity?: number;
 	reset?: number;
+	valueType?: string;
 }
 
 export interface Payload<T> {

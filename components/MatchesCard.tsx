@@ -1,16 +1,14 @@
 import React from 'react';
-import { Card, Typography } from '@mui/material';
+import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Pokemon, Props } from '../assets/models';
 
 const Holder = styled(Card)`
-	border-radius: 5px;
-	background-color: white;
+	border-radius: 0.375rem;
+	background-color: #f0f2f4;
 	width: 100%;
 	height: auto;
 	padding: 0.5rem;
-	display: flex;
-	flex-direction: column;
 	position: relative;
 `;
 
@@ -18,16 +16,18 @@ const ImageHolder = styled('span')<Props>`
 	background: url(${(props) => props.bgimage}) no-repeat center;
 	background-size: contain;
 	display: inline-block;
-	height: 110px;
+	width: 100%;
+	height: 7rem;
 `;
 
 const PokemonName = styled('span')`
 	text-transform: capitalize;
 	font-weight: bold;
 	color: black;
-	font-size: 13px;
+	font-size: 0.825rem;
 	position: absolute;
-	bottom: 5px;
+	bottom: 0.375rem;
+	left: 0.5rem;
 `;
 
 export default function MatchesCard(props: { pokemon: Pokemon }) {

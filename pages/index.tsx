@@ -1,15 +1,20 @@
-import { GetStaticProps } from 'next';
-import axios from 'axios';
-import { Payload, Pokemon } from '../assets/models';
 import Layout from '../components/Layout';
 import PokemonCard from '../components/PokemonCard';
+import Messaging from '../components/Messaging';
+import { Stacker, StackerRef } from '../components/Stacker';
+import LoadingScreen from '../components/LoadingScreen';
+
+import { Props, Pokemon } from '../assets/models';
+import { useEffect, useState, useRef } from 'react';
+
 import { Grid, Stack, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Stacker } from '../components/Stacker';
 import { createSvgIcon } from '@mui/material/utils';
 import { Box } from '@mui/system';
-import Messaging from '../components/Messaging';
 import { grey } from '@mui/material/colors';
+
+import { useAppSelector, useAppDispatch } from '../app/hooks';
+import { getSuggestedPokemon, castVote, getMatches } from '../features/pokemon';
 
 const HeartIcon = createSvgIcon(
 	<path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />,
@@ -22,8 +27,8 @@ const RejectIcon = createSvgIcon(
 );
 
 const LeftBox = styled(Box)`
-	min-width: 325px;
-	height: 100%;
+	width: 40%;
+	max-width: 25rem;
 `;
 
 const LeftGrid = styled(Grid)`
@@ -31,7 +36,6 @@ const LeftGrid = styled(Grid)`
 `;
 
 const RightGrid = styled(Grid)`
-	width: 100%;
 	height: 100%;
 	background-color: ${grey[200]};
 	position: relative;
@@ -47,27 +51,104 @@ const ButtonHolder = styled(Grid)`
 	bottom: 5%;
 
 	> * {
-		padding-left: 48px;
-		padding-right: 48px;
+		padding-left: 3rem;
+		padding-right: 3rem;
 	}
 `;
 
-const ButtonIcon = styled(Button)`
+const ButtonLikeIcon = styled(Button)<Props>`
 	border-radius: 50%;
-	width: 68px;
-	height: 68px;
+	width: 4.5rem;
+	height: 4.5rem;
+	background: rgba(
+		33,
+		208,
+		124,
+		${(props) => (props.opacity ? props.opacity * 0.003 : 0)}
+	);
+	border-color: #21d07c;
+	color: rgba(
+		${(props) =>
+			props.opacity
+				? props.opacity <= 0
+					? '33,208,124,1'
+					: '255, 255, 255, 1'
+				: '33,208,124,1'}
+	);
 `;
 
-export default function Home(props: {
-	pokemonData: Pokemon[];
-	matchData: Pokemon[];
-}) {
+const ButtonRejectIcon = styled(Button)<Props>`
+	border-radius: 50%;
+	width: 4.5rem;
+	height: 4.5rem;
+	background: rgba(
+		255,
+		68,
+		88,
+		${(props) => (props.opacity ? props.opacity * -0.003 : 0)}
+	);
+	border-color: #ff4458;
+	color: rgba(
+		${(props) =>
+			props.opacity
+				? props.opacity >= 0
+					? '255,68,88,1'
+					: '255, 255, 255, 1'
+				: '255,68,88,1'}
+	);
+`;
+
+export default function Home() {
+	const [loading, setLoading] = useState(false);
+	const [motionVal, setMotionVal] = useState(0);
+	const stacker = useRef<StackerRef>(null);
+
+	const dispatch = useAppDispatch();
+	const suggestedPokemon = useAppSelector(
+		(state) => state.pokemon.suggestedPokemon
+	);
+	const matchPokemon = useAppSelector((state) => state.pokemon.matches);
+
+	useEffect(() => {
+		setLoading(true);
+		dispatch(getSuggestedPokemon());
+		dispatch(getMatches());
+		setTimeout(() => setLoading(false), 2000);
+	}, [dispatch]);
+
+	const onVote = (item: Pokemon, vote: boolean) =>
+		dispatch(castVote(item, vote));
+
+	if (loading) {
+		return (
+			<Layout title="Pokemon Tinder">
+				<LoadingScreen />
+			</Layout>
+		);
+	}
+
+	const handleMotion = (motion: number) => {
+		setMotionVal(motion);
+	};
+
+	const voteLike = () => {
+		if (stacker && stacker.current) {
+			stacker.current.vote(true);
+		}
+	};
+
+	const voteReject = () => {
+		if (stacker && stacker.current) {
+			stacker.current.vote(false);
+		}
+	};
+
 	return (
 		<Layout title="Pokemon Tinder">
 			<Grid container sx={{ height: '100vh' }}>
 				<LeftBox sx={{ display: { xs: 'none', md: 'block' } }}>
 					<LeftGrid item xs>
-						<Messaging pokemonData={props.matchData}></Messaging>
+						<Messaging pokemonData={matchPokemon} />
 					</LeftGrid>
 				</LeftBox>
 				<RightGrid item xs>
@@ -76,29 +157,35 @@ export default function Home(props: {
 						justifyContent="center"
 						alignItems="center"
 					>
-						<Stacker onVote={(item, vote) => console.log(item.props, vote)}>
-							{props.pokemonData.map((pokemon, idx) => (
-								<PokemonCard key={idx} pokemon={pokemon} />
+						<Stacker
+							setmotion={handleMotion}
+							getvote={(item, vote) => onVote(item.props.pokemon, vote)}
+							ref={stacker}
+						>
+							{suggestedPokemon.map((pokemon: Pokemon) => (
+								<PokemonCard key={pokemon.id} pokemon={pokemon} />
 							))}
 						</Stacker>
 						<ButtonHolder container justifyContent="center" alignItems="center">
 							<Grid item>
-								<ButtonIcon
-									color="success"
-									aria-label="upload picture"
+								<ButtonLikeIcon
+									aria-label="like"
 									variant="outlined"
+									opacity={motionVal}
+									onClick={voteLike}
 								>
 									<HeartIcon sx={{ fontSize: 40 }} />
-								</ButtonIcon>
+								</ButtonLikeIcon>
 							</Grid>
 							<Grid item>
-								<ButtonIcon
-									color="error"
-									aria-label="upload picture"
+								<ButtonRejectIcon
+									aria-label="reject"
 									variant="outlined"
+									opacity={motionVal}
+									onClick={voteReject}
 								>
 									<RejectIcon sx={{ fontSize: 40 }} />
-								</ButtonIcon>
+								</ButtonRejectIcon>
 							</Grid>
 						</ButtonHolder>
 					</RightBody>
@@ -107,126 +194,3 @@ export default function Home(props: {
 		</Layout>
 	);
 }
-
-export const getStaticProps: GetStaticProps = async (context) => {
-	const response = await axios.get<Payload<Pokemon[]>>(
-		'https://pokeapi.co/api/v2/pokemon?limit=20'
-	);
-	const results = response.data.results;
-
-	const getStat = async (idx: number) => {
-		const response = await axios.get<Pokemon>(
-			`https://pokeapi.co/api/v2/pokemon-form/${idx + 1}`
-		);
-
-		return await response.data;
-	};
-
-	const pokemonData = await Promise.all(
-		results.map(async (result: Pokemon, idx: number) => {
-			const imgIndex = ('00' + (idx + 1)).slice(-3);
-			const image = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
-
-			const responseData = await getStat(idx);
-			//let types = statResult.types.map((type) => type.type.name);
-
-			return {
-				...result,
-				id: idx + 1,
-				image,
-				types: responseData.types,
-			};
-		})
-	);
-
-	const matchResponse = await axios.get<Payload<Pokemon[]>>(
-		'https://pokeapi.co/api/v2/pokemon?limit=5'
-	);
-	const matchResults = matchResponse.data.results;
-
-	const matchData = matchResults.map((result: Pokemon, idx: number) => {
-		const imgIndex = ('00' + (idx + 1)).slice(-3);
-		const image = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
-
-		return {
-			...result,
-			id: idx + 1,
-			image,
-		};
-	});
-
-	return {
-		props: {
-			pokemonData: pokemonData.reverse(),
-			matchData,
-		},
-	};
-};
-
-/*const Home: NextPage = () => {
-	return (
-		<div className={styles.container}>
-			<Head>
-				<title>Create Next App</title>
-				<meta name="description" content="Generated by create next app" />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-
-			<main className={styles.main}>
-				<h1 className={styles.title}>
-					Welcome to <a href="https://nextjs.org">Next.js!</a>
-				</h1>
-
-				<p className={styles.description}>
-					Get started by editing{' '}
-					<code className={styles.code}>pages/index.js</code>
-				</p>
-
-				<div className={styles.grid}>
-					<a href="https://nextjs.org/docs" className={styles.card}>
-						<h2>Documentation &rarr;</h2>
-						<p>Find in-depth information about Next.js features and API.</p>
-					</a>
-
-					<a href="https://nextjs.org/learn" className={styles.card}>
-						<h2>Learn &rarr;</h2>
-						<p>Learn about Next.js in an interactive course with quizzes!</p>
-					</a>
-
-					<a
-						href="https://github.com/vercel/next.js/tree/master/examples"
-						className={styles.card}
-					>
-						<h2>Examples &rarr;</h2>
-						<p>Discover and deploy boilerplate example Next.js projects.</p>
-					</a>
-
-					<a
-						href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-						className={styles.card}
-					>
-						<h2>Deploy &rarr;</h2>
-						<p>
-							Instantly deploy your Next.js site to a public URL with Vercel.
-						</p>
-					</a>
-				</div>
-			</main>
-
-			<footer className={styles.footer}>
-				<a
-					href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Powered by{' '}
-					<span className={styles.logo}>
-						<Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-					</span>
-				</a>
-			</footer>
-		</div>
-	);
-};
-
-export default Home;*/

@@ -7,13 +7,12 @@ import { Pokemon, Props } from '../assets/models';
 import { colors } from '../assets/color';
 
 const Holder = styled(Card)`
-	border-radius: 25px;
-	background-color: white;
-	width: 100%;
-	height: 100%;
-	padding: 12px;
 	display: flex;
 	flex-direction: column;
+	border-radius: 1.625rem;
+	padding: 0.75rem;
+	width: 100%;
+	height: 100%;
 
 	> * {
 		margin-bottom: 0.5rem;
@@ -24,8 +23,8 @@ const ImageHolder = styled('span')<Props>`
 	background: url(${(props) => props.bgimage}) no-repeat center;
 	background-size: contain;
 	display: inline-block;
-	height: 100%;
-	min-height: 300px;
+	height: 80%;
+	min-height: 18.75rem;
 `;
 
 const PokemonName = styled(Typography)`
@@ -60,7 +59,12 @@ export default function PokemonCard(props: { pokemon: Pokemon }) {
 						<CustomizedChip
 							key={idx}
 							className="mr-1 capitalized"
-							avatar={<Avatar src={`/icon/${type.type.name}.svg`} />}
+							avatar={
+								<Avatar
+									src={`/icon/${type.type.name}.svg`}
+									alt={type.type.name}
+								/>
+							}
 							label={type.type.name}
 							bgcolor={colors[type.type.name]}
 						/>

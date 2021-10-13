@@ -13,11 +13,14 @@
     "@emotion/styled": "^11.3.0",
     "@mui/material": "^5.0.2",
     "@mui/styled-engine-sc": "^5.0.0",
+    "@reduxjs/toolkit": "^1.6.2",
+    "@types/react-redux": "^7.1.19",
     "axios": "^0.22.0",
     "framer-motion": "^4.1.17",
     "next": "11.1.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-redux": "^7.2.5",
     "styled-component": "^2.8.0"
   },
   "devDependencies": {

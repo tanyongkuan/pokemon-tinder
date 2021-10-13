@@ -1,27 +1,31 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, {
+	useRef,
+	useEffect,
+	useState,
+	useImperativeHandle,
+	forwardRef,
+} from 'react';
 import { motion, useMotionValue, useAnimation } from 'framer-motion';
 import { styled } from '@mui/material/styles';
-import { Typography } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { Props } from '../assets/models';
 
 const StyledCard = styled(motion.div)`
 	position: absolute;
-	min-width: 340px;
-	max-width: 420px;
+	max-width: 26.25rem;
 	min-height: 450px;
 	width: 90%;
 	height: 70%;
-	margin-bottom: 50px;
+	margin-bottom: 3.125rem;
 `;
 
 const AcceptLabel = styled('div')<Props>`
 	position: absolute;
 	transform: rotate(-20deg);
-	font-family: ProximaNova;
-	border: 4px solid green;
-	border-radius: 4px;
+	border: 0.25rem solid green;
+	border-radius: 0.25rem;
 	color: green;
-	padding: 5px;
+	padding: 0.375rem;
 	top: 10%;
 	left: 3%;
 	opacity: ${(props) =>
@@ -31,27 +35,41 @@ const AcceptLabel = styled('div')<Props>`
 const RejectLabel = styled('div')<Props>`
 	position: absolute;
 	transform: rotate(20deg);
-	font-family: ProximaNova;
-	border: 4px solid red;
-	border-radius: 4px;
+	border: 0.25rem solid red;
+	border-radius: 0.25rem;
 	color: red;
-	padding: 5px;
+	padding: 0.375rem;
 	top: 10%;
 	right: 3%;
 	opacity: ${(props) =>
 		props.opacity ? (props.reset ? 0 : props.opacity * -0.003) : 0};
 `;
 
-export const Card = ({
+type CardProps = {
+	children: JSX.Element;
+	draggable: boolean;
+	setvote: (vote: boolean) => void;
+	setmotion: (motion: number) => void;
+};
+
+export type StyleCardRef = {
+	current: HTMLDivElement | null;
+	vote: (vote: boolean) => void;
+};
+
+/*export const StyleCard = ({
 	children,
 	draggable,
 	setVote,
+	setmotion,
 	...props
 }: {
 	children: JSX.Element;
 	draggable: boolean;
 	setVote: (vote: boolean) => void;
-}) => {
+	setmotion: (motion: number) => void;
+}) => {*/
+export const StyleCard = forwardRef<StyleCardRef, CardProps>((props, ref) => {
 	// motion stuff
 	const cardElem = useRef<HTMLDivElement>(null);
 
@@ -65,6 +83,22 @@ export const Card = ({
 	const [direction, setDirection] = useState('center');
 
 	const [velocity, setVelocity] = useState(0);
+
+	useImperativeHandle(ref, () => ({
+		current: cardElem.current,
+		vote: (vote: boolean) => {
+			setConstrained(false);
+			if (vote) {
+				controls.start({
+					x: flyAwayDistance('right'),
+				});
+			} else {
+				controls.start({
+					x: flyAwayDistance('left'),
+				});
+			}
+		},
+	}));
 
 	const getVote = (childNode: HTMLDivElement, parentNode: HTMLDivElement) => {
 		const childRect = childNode.getBoundingClientRect();
@@ -80,38 +114,47 @@ export const Card = ({
 
 	// determine direction of swipe based on velocity
 	const getDirection = () => {
-		return velocity >= 1 ? 'right' : velocity <= -1 ? 'left' : 'center';
+		return velocity >= 0.6 ? 'right' : velocity <= -0.6 ? 'left' : 'center';
 	};
 
 	const getTrajectory = () => {
 		setReset(0);
+		props.setmotion(x.get());
 		setVelocity(x.getVelocity());
 		setDirection(getDirection());
 	};
 
+	const flyAwayDistance = (direction: string) => {
+		if (cardElem.current) {
+			const parentWidth = (
+				cardElem.current.parentNode as HTMLDivElement
+			).getBoundingClientRect().width;
+			const childWidth = cardElem.current.getBoundingClientRect().width;
+			return direction === 'left'
+				? -parentWidth / 2 - childWidth / 2
+				: parentWidth / 2 + childWidth / 2;
+		}
+
+		return 0;
+	};
+
 	const flyAway = (min: number) => {
-		const flyAwayDistance = (direction: string) => {
-			if (cardElem.current) {
-				const parentWidth = (
-					cardElem.current.parentNode as HTMLDivElement
-				).getBoundingClientRect().width;
-				const childWidth = cardElem.current.getBoundingClientRect().width;
-				return direction === 'left'
-					? -parentWidth / 2 - childWidth / 2
-					: parentWidth / 2 + childWidth / 2;
-			}
-
-			return 0;
-		};
-
 		if (direction && Math.abs(velocity) > min) {
 			setConstrained(false);
 			controls.start({
 				x: flyAwayDistance(direction),
 			});
+			props.setmotion(0);
 		} else {
 			setReset(1);
+			props.setmotion(0);
 		}
+	};
+
+	const fly = () => {
+		setDirection('left');
+		setVelocity(100);
+		flyAway(0);
 	};
 
 	useEffect(() => {
@@ -120,7 +163,7 @@ export const Card = ({
 				const childNode = cardElem.current;
 				const parentNode = cardElem.current.parentNode as HTMLDivElement;
 				const result = getVote(childNode, parentNode);
-				return result !== undefined && setVote(result);
+				return result !== undefined && props.setvote(result);
 			}
 
 			return false;
@@ -131,7 +174,7 @@ export const Card = ({
 
 	return (
 		<StyledCard
-			drag={draggable}
+			drag={props.draggable}
 			animate={controls}
 			dragConstraints={constrained && { left: 0, right: 0, top: 0, bottom: 0 }}
 			dragElastic={1}
@@ -140,7 +183,6 @@ export const Card = ({
 			onDrag={getTrajectory}
 			onDragEnd={() => flyAway(500)}
 			whileTap={{ scale: 1.1 }}
-			{...props}
 		>
 			<RejectLabel opacity={x.get()} reset={reset}>
 				<Typography variant="h4">NOPE</Typography>
@@ -148,7 +190,10 @@ export const Card = ({
 			<AcceptLabel opacity={x.get()} reset={reset}>
 				<Typography variant="h4">LIKE</Typography>
 			</AcceptLabel>
-			{children}
+			{props.children}
 		</StyledCard>
 	);
-};
+});
+
+StyleCard.displayName = 'StyleCard';
+export default StyleCard;
