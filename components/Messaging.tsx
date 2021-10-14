@@ -21,10 +21,21 @@ const BrandText = styled(Typography)`
 	margin-left: 0.75rem;
 `;
 
-const Content = styled('div')`
-	height: 90%;
+const ContentContainer = styled('div')`
 	flex-grow: 1;
+	position: relative;
+`;
+
+const Content = styled('div')`
+	display: flex;
+	flex-direction: column;
 	padding: 0.5rem;
+	padding-right: 0.25rem;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 `;
 
 const TabHolder = styled(Tabs)`
@@ -46,8 +57,9 @@ const CustomTab = styled(Tab)`
 `;
 
 const PanelHolder = styled('div')`
-	height: 83%;
+	flex-grow: 1;
 	overflow: auto;
+	margin-top: 8px;
 
 	::-webkit-scrollbar {
 		width: 0.375rem;
@@ -57,6 +69,8 @@ const PanelHolder = styled('div')`
 		background-color: ${grey[300]};
 	}
 `;
+
+const PanelContainer = styled(Box)``;
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -69,7 +83,7 @@ function TabPanel(props: TabPanelProps) {
 
 	return (
 		<PanelHolder role="tabpanel" hidden={value !== index} {...other}>
-			{value === index && <Box sx={{ pt: 1 }}>{children}</Box>}
+			{value === index && <PanelContainer>{children}</PanelContainer>}
 		</PanelHolder>
 	);
 }
@@ -95,22 +109,24 @@ export default function Messaging(props: { pokemonData: Pokemon[] }) {
 					<BrandText variant="subtitle1">Pokemon Tinder</BrandText>
 				</Grid>
 			</HeaderContainer>
-			<Content>
-				<Box sx={{ borderBottom: 0, borderColor: '#fff' }}>
-					<TabHolder value={value} onChange={handleChange}>
-						<CustomTab label="Matches" />
-					</TabHolder>
-				</Box>
-				<TabPanel value={value} index={0}>
-					<Grid container spacing={1}>
-						{props.pokemonData.map((pokemon, idx) => (
-							<Grid key={idx} item xs={4}>
-								<MatchesCard key={idx} pokemon={pokemon}></MatchesCard>
-							</Grid>
-						))}
-					</Grid>
-				</TabPanel>
-			</Content>
+			<ContentContainer>
+				<Content>
+					<Box sx={{ borderBottom: 0, borderColor: '#fff' }}>
+						<TabHolder value={value} onChange={handleChange}>
+							<CustomTab label="Matches" />
+						</TabHolder>
+					</Box>
+					<TabPanel value={value} index={0}>
+						<Grid container spacing={1}>
+							{props.pokemonData.map((pokemon, idx) => (
+								<Grid key={idx} item xs={4}>
+									<MatchesCard key={idx} pokemon={pokemon}></MatchesCard>
+								</Grid>
+							))}
+						</Grid>
+					</TabPanel>
+				</Content>
+			</ContentContainer>
 		</StackContainer>
 	);
 }

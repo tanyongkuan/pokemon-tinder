@@ -2,10 +2,11 @@ import React from 'react';
 import { Card } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Pokemon, Props } from '../assets/models';
+import { grey } from '@mui/material/colors';
 
 const Holder = styled(Card)`
 	border-radius: 0.375rem;
-	background-color: #f0f2f4;
+	background-color: ${grey[100]};
 	width: 100%;
 	height: auto;
 	padding: 0.5rem;
