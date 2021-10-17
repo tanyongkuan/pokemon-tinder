@@ -1,30 +1,27 @@
 import Layout from '../components/Layout';
-import PokemonCard from '../components/PokemonCard';
 import Messaging from '../components/Messaging';
-import { Stacker, StackerRef } from '../components/Stacker';
 import LoadingScreen from '../components/LoadingScreen';
-
-import { Props, Pokemon } from '../assets/models';
-import { useEffect, useState, useRef } from 'react';
-
-import { Grid, Stack, Button } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import Suggested from '../components/Suggested';
+import Matches from '../components/Matches';
 import { createSvgIcon } from '@mui/material/utils';
+
+import { useEffect, useState } from 'react';
+
+import {
+	Grid,
+	AppBar,
+	Typography,
+	Avatar,
+	BottomNavigation,
+	BottomNavigationAction,
+} from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import { grey } from '@mui/material/colors';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { getSuggestedPokemon, castVote, getMatches } from '../features/pokemon';
-
-const HeartIcon = createSvgIcon(
-	<path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />,
-	'heart'
-);
-
-const RejectIcon = createSvgIcon(
-	<path d="M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z" />,
-	'reject'
-);
+import { getSuggestedPokemon, getMatches } from '../features/pokemon';
 
 const LeftBox = styled(Box)`
 	width: 40%;
@@ -38,70 +35,50 @@ const LeftGrid = styled(Grid)`
 const RightGrid = styled(Grid)`
 	height: 100%;
 	background-color: ${grey[200]};
+	display: flex;
+	flex-direction: column;
+`;
+
+const Container = styled('div')`
 	position: relative;
-`;
-const RightBody = styled(Stack)`
-	width: inherit;
-	height: inherit;
-	position: inherit;
+	flex-grow: 1;
 `;
 
-const ButtonHolder = styled(Grid)`
-	position: absolute;
-	bottom: 5%;
+const ApplicationBar = styled(AppBar)`
+	background: linear-gradient(#e66465, #9198e5);
+	padding: 0.5rem;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
 
-	> * {
-		padding-left: 3rem;
-		padding-right: 3rem;
+	${(props) => props.theme.breakpoints.up('xs')} {
+		display: block;
+	}
+
+	${(props) => props.theme.breakpoints.up('md')} {
+		display: none;
 	}
 `;
 
-const ButtonLikeIcon = styled(Button)<Props>`
-	border-radius: 50%;
-	width: 4.5rem;
-	height: 4.5rem;
-	background: rgba(
-		33,
-		208,
-		124,
-		${(props) => (props.opacity ? props.opacity * 0.003 : 0)}
-	);
-	border-color: #21d07c;
-	color: rgba(
-		${(props) =>
-			props.opacity
-				? props.opacity <= 0
-					? '33,208,124,1'
-					: '255, 255, 255, 1'
-				: '33,208,124,1'}
-	);
+const BrandText = styled(Typography)`
+	color: #fff;
+	font-weight: 600;
+	margin-left: 0.75rem;
 `;
 
-const ButtonRejectIcon = styled(Button)<Props>`
-	border-radius: 50%;
-	width: 4.5rem;
-	height: 4.5rem;
-	background: rgba(
-		255,
-		68,
-		88,
-		${(props) => (props.opacity ? props.opacity * -0.003 : 0)}
-	);
-	border-color: #ff4458;
-	color: rgba(
-		${(props) =>
-			props.opacity
-				? props.opacity >= 0
-					? '255,68,88,1'
-					: '255, 255, 255, 1'
-				: '255,68,88,1'}
-	);
-`;
+const HeartIcon = createSvgIcon(
+	<path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />,
+	'heart'
+);
+
+const MessageIcon = createSvgIcon(
+	<path d="M22 7V16C22 17.1 21.1 18 20 18H6L2 22V4C2 2.9 2.9 2 4 2H14.1C14 2.3 14 2.7 14 3S14 3.7 14.1 4H4V16H20V7.9C20.7 7.8 21.4 7.4 22 7M16 3C16 4.7 17.3 6 19 6S22 4.7 22 3 20.7 0 19 0 16 1.3 16 3Z" />,
+	'message'
+);
 
 export default function Home() {
 	const [loading, setLoading] = useState(false);
-	const [motionVal, setMotionVal] = useState(0);
-	const stacker = useRef<StackerRef>(null);
+	const [navValue, setNavValue] = useState(1);
 
 	const dispatch = useAppDispatch();
 	const suggestedPokemon = useAppSelector(
@@ -116,9 +93,6 @@ export default function Home() {
 		setTimeout(() => setLoading(false), 2000);
 	}, [dispatch]);
 
-	const onVote = (item: Pokemon, vote: boolean) =>
-		dispatch(castVote(item, vote));
-
 	if (loading) {
 		return (
 			<Layout title="Pokemon Tinder">
@@ -127,19 +101,14 @@ export default function Home() {
 		);
 	}
 
-	const handleMotion = (motion: number) => {
-		setMotionVal(motion);
-	};
+	const NavItem = () => {
+		const theme = useTheme();
+		const matches = useMediaQuery(theme.breakpoints.up('md'));
 
-	const voteLike = () => {
-		if (stacker && stacker.current) {
-			stacker.current.vote(true);
-		}
-	};
-
-	const voteReject = () => {
-		if (stacker && stacker.current) {
-			stacker.current.vote(false);
+		if (navValue === 0 && !matches) {
+			return <Matches pokemonData={matchPokemon} />;
+		} else {
+			return <Suggested suggestedPokemon={suggestedPokemon} />;
 		}
 	};
 
@@ -152,43 +121,40 @@ export default function Home() {
 					</LeftGrid>
 				</LeftBox>
 				<RightGrid item xs>
-					<RightBody
-						direction="column"
-						justifyContent="center"
-						alignItems="center"
+					<ApplicationBar position="static">
+						<Grid container>
+							<Grid item>
+								<Avatar
+									alt="Pokemon Tinder"
+									src="/icon/Pokeball_white.svg"
+									sx={{ width: 30, height: 30 }}
+								/>
+							</Grid>
+							<Grid item>
+								<BrandText variant="h6">Pokemon Tinder</BrandText>
+							</Grid>
+						</Grid>
+					</ApplicationBar>
+					<Container>
+						<NavItem />
+					</Container>
+					<BottomNavigation
+						showLabels
+						value={navValue}
+						onChange={(event, newValue) => {
+							setNavValue(newValue);
+						}}
+						sx={{ display: { xs: 'flex', md: 'none' } }}
 					>
-						<Stacker
-							setmotion={handleMotion}
-							getvote={(item, vote) => onVote(item.props.pokemon, vote)}
-							ref={stacker}
-						>
-							{suggestedPokemon.map((pokemon: Pokemon) => (
-								<PokemonCard key={pokemon.id} pokemon={pokemon} />
-							))}
-						</Stacker>
-						<ButtonHolder container justifyContent="center" alignItems="center">
-							<Grid item>
-								<ButtonLikeIcon
-									aria-label="like"
-									variant="outlined"
-									opacity={motionVal}
-									onClick={voteLike}
-								>
-									<HeartIcon sx={{ fontSize: 40 }} />
-								</ButtonLikeIcon>
-							</Grid>
-							<Grid item>
-								<ButtonRejectIcon
-									aria-label="reject"
-									variant="outlined"
-									opacity={motionVal}
-									onClick={voteReject}
-								>
-									<RejectIcon sx={{ fontSize: 40 }} />
-								</ButtonRejectIcon>
-							</Grid>
-						</ButtonHolder>
-					</RightBody>
+						<BottomNavigationAction
+							label="Matches"
+							icon={<MessageIcon sx={{ fontSize: 24 }} />}
+						></BottomNavigationAction>
+						<BottomNavigationAction
+							label="Recommendation"
+							icon={<HeartIcon sx={{ fontSize: 24 }} />}
+						></BottomNavigationAction>
+					</BottomNavigation>
 				</RightGrid>
 			</Grid>
 		</Layout>

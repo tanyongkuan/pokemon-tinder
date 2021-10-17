@@ -24,9 +24,7 @@ export default function Layout(prop: {
 				<meta name="description" content="Tinder for Pokemon Lovers" />
 				<link rel="icon" href="/icon/pokeball.svg" />
 			</Head>
-			<BodyContainer className="container min-h-screen">
-				{prop.children}
-			</BodyContainer>
+			<BodyContainer>{prop.children}</BodyContainer>
 		</MainContainer>
 	);
 }

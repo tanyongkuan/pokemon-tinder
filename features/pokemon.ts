@@ -50,7 +50,6 @@ export const getSuggestedPokemon =
 				const image = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imgIndex}.png`;
 
 				const responseData = await getStat(id);
-				//let types = statResult.types.map((type) => type.type.name);
 
 				return {
 					...result,
@@ -123,7 +122,7 @@ export const castVote =
 		localStorage.setItem('offset', pokemonData.id.toString());
 		dispatch(pokemon.actions.setOffset(pokemonData.id));
 
-		dispatch(pokemon.actions.setSuggestedPokemon(suggestedPokemon));
+		dispatch(pokemon.actions.setSuggestedPokemon(suggestedPokemon.reverse()));
 	};
 
 export const pokemon = createSlice({
@@ -131,7 +130,6 @@ export const pokemon = createSlice({
 	// `createSlice` will infer the state type from the `initialState` argument
 	initialState,
 	reducers: {
-		//Get suggestedpokemon to match
 		setOffset: (state, action: PayloadAction<number>) => {
 			return {
 				...state,

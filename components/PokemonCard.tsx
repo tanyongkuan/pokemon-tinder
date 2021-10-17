@@ -11,7 +11,6 @@ const Holder = styled(Card)`
 	flex-direction: column;
 	border-radius: 1.625rem;
 	padding: 0.75rem;
-	width: 100%;
 	height: 100%;
 
 	> * {

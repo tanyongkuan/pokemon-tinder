@@ -7,7 +7,6 @@ import { grey } from '@mui/material/colors';
 const Holder = styled(Card)`
 	border-radius: 0.375rem;
 	background-color: ${grey[100]};
-	width: 100%;
 	height: auto;
 	padding: 0.5rem;
 	position: relative;

@@ -7,16 +7,13 @@ import React, {
 } from 'react';
 import { motion, useMotionValue, useAnimation } from 'framer-motion';
 import { styled } from '@mui/material/styles';
-import { Typography, Button } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Props } from '../assets/models';
 
 const StyledCard = styled(motion.div)`
 	position: absolute;
 	max-width: 26.25rem;
-	min-height: 450px;
 	width: 90%;
-	height: 70%;
-	margin-bottom: 3.125rem;
 `;
 
 const AcceptLabel = styled('div')<Props>`
@@ -57,18 +54,6 @@ export type StyleCardRef = {
 	vote: (vote: boolean) => void;
 };
 
-/*export const StyleCard = ({
-	children,
-	draggable,
-	setVote,
-	setmotion,
-	...props
-}: {
-	children: JSX.Element;
-	draggable: boolean;
-	setVote: (vote: boolean) => void;
-	setmotion: (motion: number) => void;
-}) => {*/
 export const StyleCard = forwardRef<StyleCardRef, CardProps>((props, ref) => {
 	// motion stuff
 	const cardElem = useRef<HTMLDivElement>(null);
@@ -149,12 +134,6 @@ export const StyleCard = forwardRef<StyleCardRef, CardProps>((props, ref) => {
 			setReset(1);
 			props.setmotion(0);
 		}
-	};
-
-	const fly = () => {
-		setDirection('left');
-		setVelocity(100);
-		flyAway(0);
 	};
 
 	useEffect(() => {
