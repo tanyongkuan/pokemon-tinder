@@ -24,7 +24,7 @@
 
 ## Screenshots
 
-![Home Page](/public/screenshot.png 'Home Page')
+![Home Page]([/public/screenshot.png](https://github.com/tanyongkuan/pokemon-tinder/blob/main/public/screenshot.PNG) 'Home Page')
 
 ## About Me
 
