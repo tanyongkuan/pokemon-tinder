@@ -23,8 +23,7 @@
 <br/><br/>
 
 ## Screenshots
-
-![Home Page]([/public/screenshot.png](https://github.com/tanyongkuan/pokemon-tinder/blob/main/public/screenshot.PNG) 'Home Page')
+![Home Page](https://github.com/tanyongkuan/pokemon-tinder/blob/main/public/screenshot.PNG?raw=true)
 
 ## About Me
 
